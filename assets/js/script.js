@@ -5,6 +5,8 @@ const cdThumb = $(".cd-thumb");
 const audio = $("#audio");
 const cd = $(".cd");
 const playBtn = $(".btn-toggle-play");
+const nextBtn = $(".btn-next");
+const prevBtn = $(".btn-prev");
 const player = $(".player");
 const progress = $("#progress");
 const app = {
@@ -71,6 +73,16 @@ const app = {
     handleEvents: function () {
         const _this = this;
         const cdWidth = cd.offsetWidth;
+
+        // Xử lý CD quay
+        const cdThumbAnimate = cdThumb.animate(
+            [{ transform: "rotate(360deg)" }],
+            {
+                duration: 10000,
+                iterations: Infinity,
+            }
+        );
+        cdThumbAnimate.pause();
         // Xử lý phóng to, thu nhỏ CD
         document.onscroll = function () {
             const scrollTop =
@@ -91,11 +103,13 @@ const app = {
         audio.onplay = function () {
             _this.isPlaying = true;
             player.classList.add("playing");
+            cdThumbAnimate.play();
         };
         // Khi xong bị pause
         audio.onpause = function () {
             _this.isPlaying = false;
             player.classList.remove("playing");
+            cdThumbAnimate.pause();
         };
         // Khi tiến độ bài hát thay đổi
         audio.ontimeupdate = function () {
@@ -111,11 +125,35 @@ const app = {
             const seekTime = (e.target.value * audio.duration) / 100;
             audio.currentTime = seekTime;
         };
+        // Khi next bài hát
+        nextBtn.onclick = function () {
+            _this.nextSong();
+            audio.play();
+        };
+        // Khi prev bài hát
+        prevBtn.onclick = function () {
+            _this.prevSong();
+            audio.play();
+        };
     },
     loadCurrentSong: function () {
         heading.textContent = this.currentSong.name;
         cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`;
         audio.src = this.currentSong.path;
+    },
+    nextSong: function () {
+        this.currentIndex++;
+        if (this.currentIndex >= this.songs.length) {
+            this.currentIndex = 0;
+        }
+        this.loadCurrentSong();
+    },
+    prevSong: function () {
+        this.currentIndex--;
+        if (this.currentIndex < 0) {
+            this.currentIndex = this.songs.length - 1;
+        }
+        this.loadCurrentSong();
     },
     start: function () {
         // Định nghĩa các thuộc tính cho object
