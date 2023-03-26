@@ -4,14 +4,20 @@ const heading = $("header h2");
 const cdThumb = $(".cd-thumb");
 const audio = $("#audio");
 const cd = $(".cd");
+const player = $(".player");
+const progress = $("#progress");
+// Button
 const playBtn = $(".btn-toggle-play");
 const nextBtn = $(".btn-next");
 const prevBtn = $(".btn-prev");
-const player = $(".player");
-const progress = $("#progress");
+const randomBtn = $(".btn-random");
+const repeatBtn = $(".btn-repeat");
+// App
 const app = {
     currentIndex: 0,
     isPlaying: false,
+    isRandom: false,
+    isRepeat: false,
     songs: [
         {
             name: "Save Your Tears",
@@ -45,9 +51,9 @@ const app = {
         },
     ],
     render: function () {
-        const htmls = this.songs.map((song) => {
+        const htmls = this.songs.map((song, index) => {
             return `
-            <div class="song">
+            <div class="song ${index === this.currentIndex ? "active" : ""}">
                 <div
                     class="thumb"
                     style="background-image: url('${song.image}');">
@@ -127,13 +133,41 @@ const app = {
         };
         // Khi next bài hát
         nextBtn.onclick = function () {
-            _this.nextSong();
+            if (_this.isRandom) {
+                _this.playRandomSong();
+            } else {
+                _this.nextSong();
+            }
             audio.play();
+            _this.render();
         };
         // Khi prev bài hát
         prevBtn.onclick = function () {
-            _this.prevSong();
+            if (_this.isRandom) {
+                _this.playRandomSong();
+            } else {
+                _this.prevSong();
+            }
+            _this.render();
             audio.play();
+        };
+        // Khi random bài hát
+        randomBtn.onclick = function (e) {
+            _this.isRandom = !_this.isRandom;
+            randomBtn.classList.toggle("active", _this.isRandom);
+        };
+        // Xử lý next song khi audio kết thúc
+        audio.onended = function () {
+            if (_this.isRepeat) {
+                audio.play();
+            } else {
+                nextBtn.click();
+            }
+        };
+        // Xử lý phát lại một bài hát
+        repeatBtn.onclick = function () {
+            _this.isRepeat = !_this.isRepeat;
+            repeatBtn.classList.toggle("active", _this.isRepeat);
         };
     },
     loadCurrentSong: function () {
@@ -153,6 +187,14 @@ const app = {
         if (this.currentIndex < 0) {
             this.currentIndex = this.songs.length - 1;
         }
+        this.loadCurrentSong();
+    },
+    playRandomSong: function () {
+        let newIndex;
+        do {
+            newIndex = Math.floor(Math.random() * this.songs.length);
+        } while (newIndex === this.currentIndex);
+        this.currentIndex = newIndex;
         this.loadCurrentSong();
     },
     start: function () {
