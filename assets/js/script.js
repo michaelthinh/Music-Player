@@ -53,6 +53,30 @@ const app = {
             path: "./assets/music/thrift-shop.mp3",
             image: "./assets/img/thrift-shop-banner.jpg",
         },
+        {
+            name: "Light Switch",
+            singer: "Charlie Puth",
+            path: "./assets/music/light-switch.mp3",
+            image: "./assets/img/light-switch-banner.jpg",
+        },
+        {
+            name: "Dancin (Krono Remix)",
+            singer: "Aaron Smith Ft. Luvli",
+            path: "./assets/music/dancin-krono-remix.mp3",
+            image: "./assets/img/dancin-krono-remix-banner.jpg",
+        },
+        {
+            name: "Stressed Out",
+            singer: "twenty one pilots",
+            path: "./assets/music/stressed-out.mp3",
+            image: "./assets/img/stressed-out-banner.jpg",
+        },
+        {
+            name: "Gangsta's Paradise",
+            singer: "Coolio Ft. L.V",
+            path: "./assets/music/gangsta-paradise.mp3",
+            image: "./assets/img/gangsta-paradise-banner.jpg",
+        },
     ],
     setConfig: function (key, value) {
         this.config[key] = value;
@@ -154,11 +178,7 @@ const app = {
         };
         // Khi prev bài hát
         prevBtn.onclick = function () {
-            if (_this.isRandom) {
-                _this.playRandomSong();
-            } else {
-                _this.prevSong();
-            }
+            _this.prevSong();
             _this.render();
             _this.scrollToActiveSong();
             audio.play();
